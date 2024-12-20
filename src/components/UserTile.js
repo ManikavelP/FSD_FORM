@@ -1,9 +1,13 @@
 import React from "react";
 
 function UserTile({ User, onDelete }) {
+  const today = new Date();
+  const dateOfJoining = new Date(User.date_of_joining);
+  const isFutureCandidate = dateOfJoining > today;
+
   return (
     <div
-      className="tile"
+      className={`tile ${isFutureCandidate ? 'future-candidate' : ''}`}
       style={{
         display: "flex",
         flexDirection: "row",
@@ -14,6 +18,7 @@ function UserTile({ User, onDelete }) {
         padding: "20px",
         maxWidth: "600px",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", 
+        position: "relative", 
       }}
     >
       <div
@@ -59,12 +64,16 @@ function UserTile({ User, onDelete }) {
       <button
         aria-label={`Delete ${User.first_name} ${User.last_name}`}
         style={deleteButtonStyle}
-        onMouseEnter={(e) => (e.target.style.background = "#e33d3f")}
-        onMouseLeave={(e) => (e.target.style.background = "#ff4d4f")}
         onClick={() => onDelete(User.id)}
       >
         Delete
       </button>
+
+      {isFutureCandidate && (
+        <span className="badge badge-warning" style={badgeStyle}>
+          Future Candidate
+        </span>
+      )}
     </div>
   );
 }
@@ -89,7 +98,18 @@ const deleteButtonStyle = {
   padding: "10px 20px",
   borderRadius: "8px",
   cursor: "pointer",
-  transition: "background-color 0.3s ease",
+};
+
+const badgeStyle = {
+  position: "absolute",
+  top: "10px",
+  right: "10px",
+  background: "lightgreen",
+  color: "black",
+  padding: "5px 10px",
+  borderRadius: "8px",
+  fontSize: "12px",
+  whiteSpace: "nowrap",
 };
 
 export default UserTile;
