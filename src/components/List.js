@@ -36,7 +36,6 @@ function List() {
       );
 
       if (response.ok) {
-     
         setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
       } else {
         const errorMsg = await response.text();
@@ -53,23 +52,20 @@ function List() {
     <div style={{ padding: "20px" }}>
       <h1>User Details</h1>
 
-      {error && <p style={{ color: "red" }}>Error: {error}</p>}
-
       {loading ? (
         <p>Loading user details...</p>
       ) : (
         <>
-          {users.length > 0 ? (
-            users.map((user) => (
-              <UserTile
-                key={user.id}
-                User={user}
-                onDelete={handleDelete}
-              />
-            ))
-          ) : (
-            <p>No users found.</p>
-          )}
+          {error && <p style={{ color: "red" }}>{error}</p>}
+
+          {users.map((user) => (
+            <UserTile
+              key={user.id}
+              User={user}
+              onDelete={handleDelete}
+              style={{ backgroundColor: "gray" }}  // Default card style
+            />
+          ))}
 
           <DetailsButton child={"Add Employee"} to={"/"} />
         </>

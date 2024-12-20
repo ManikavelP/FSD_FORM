@@ -19,13 +19,13 @@ function UserTile({ User, onDelete }) {
       <div
         className="img"
         style={{
-          width: "120px",
-          height: "120px",
-          borderRadius: "50%",
+          width: "130px",
+          height: "100px",
+          borderRadius: "100%",
           backgroundImage: `url(${process.env.PUBLIC_URL + "/default.png"}), url('https://via.placeholder.com/120')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          marginRight: "20px",
+          margin: "10px",
         }}
       ></div>
 

@@ -28,68 +28,74 @@ function EmployeeForm() {
 
       if (response.ok) {
         setMessege(data.messege);
-        alert("Employee added successfully")
+        alert("Employee added successfully");
         console.log("Response is successful");
-        setTimeout(()=>setMessege(''),3000);
+        setTimeout(() => setMessege(''), 3000);
 
-        resetForm(); 
+        resetForm();
       } else {
-        setMessege(data.messege);
-        alert(`${data.messege}`);
+        setMessege(data.messege || "An error occurred");
+        alert(data.messege || "An error occurred");
         console.log(data.messege);
-        setTimeout(()=>setMessege(''),3000);
-
+        setTimeout(() => setMessege(''), 3000);
       }
     } catch (err) {
       console.error(err);
       setMessege("An error occurred");
-      setTimeout(()=>setMessege(''),3000);
+      setTimeout(() => setMessege(''), 3000);
     }
   };
 
-  const validateForm = (values) => {
+  const validateForm = async (values) => {
     const errors = {};
+    try {
+      const existingEmployees = await fetch("http://localhost:5000/api/auth/getEmployee")
+        .then((response) => response.json());
 
-    if (!values.firstName) {
-      errors.firstName = "First Name is required";
-    }
+      if (!values.firstName) {
+        errors.firstName = "First Name is required";
+      }
 
-    if (!values.lastName) {
-      errors.lastName = "Last Name is required";
-    }
+      if (!values.lastName) {
+        errors.lastName = "Last Name is required";
+      }
 
-    if (!values.employeeId) {
-      errors.employeeId = "Employee ID is required";
-    } else if (!/^[a-zA-Z0-9]{10}$/.test(values.employeeId)) {
-      errors.employeeId = "Employee ID must be 10 alphanumeric characters";
-    }
+      if (!values.employeeId) {
+        errors.employeeId = "Employee ID is required";
+      } else if (!/^[a-zA-Z0-9]{10}$/.test(values.employeeId)) {
+        errors.employeeId = "Employee ID must be 10 alphanumeric characters";
+      } else if (existingEmployees.some(emp => emp.employee_id === values.employeeId)) {
+        errors.employeeId = "Employee ID already exists";
+      }
 
-    if (!values.email) {
-      errors.email = "Email is required";
-    } else if (!validator.isEmail(values.email)) {
-      errors.email = "Invalid email address";
-    }
+      if (!values.email) {
+        errors.email = "Email is required";
+      } else if (!validator.isEmail(values.email)) {
+        errors.email = "Invalid email address";
+      } else if (existingEmployees.some(emp => emp.email === values.email)) {
+        errors.email = "Email already exists";
+      }
 
-    if (!values.phone) {
-      errors.phone = "Phone Number is required";
-    } else if (!validator.isMobilePhone(values.phone, "en-IN")) {
-      errors.phone = "Invalid Phone Number";
-    }
+      if (!values.phone) {
+        errors.phone = "Phone Number is required";
+      } else if (!validator.isMobilePhone(values.phone, "en-IN")) {
+        errors.phone = "Invalid Phone Number";
+      }
 
-    if (!values.department) {
-      errors.department = "Department is required";
-    }
+      if (!values.department) {
+        errors.department = "Department is required";
+      }
 
-    if (!values.role) {
-      errors.role = "Role is required";
-    }
+      if (!values.role) {
+        errors.role = "Role is required";
+      }
 
-    if (!values.dateOfJoining) {
-      errors.dateOfJoining = "Date of Joining is required";
-    } else if (!validator.isDate(values.dateOfJoining)) {
-      errors.dateOfJoining = "Invalid date format";
-    } else if (new Date(values.dateOfJoining) > new Date()) {
-      errors.dateOfJoining = "Future dates are not allowed";
+      if (!values.dateOfJoining) {
+        errors.dateOfJoining = "Date of Joining is required";
+      } 
+
+    } catch (error) {
+      console.error("Error fetching existing employees:", error);
     }
 
     return errors;
@@ -277,13 +283,14 @@ function EmployeeForm() {
                     <div className="invalid-feedback">{formik.errors.role}</div>
                   )}
                 </div>
+
                 <div className="form-gorup mt-4">
                   <label htmlFor="picture">Upload Profile Pic</label>
                   <Field
                     name="picture"
                     type="file"
                     className="form-control"
-                  />{" "}
+                  />
                 </div>
 
                 {/* Buttons */}
@@ -315,3 +322,5 @@ function EmployeeForm() {
 }
 
 export default EmployeeForm;
+
+
